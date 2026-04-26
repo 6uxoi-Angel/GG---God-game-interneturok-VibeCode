@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Game</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #070b16;
+            --bg-card: rgba(14, 22, 38, 0.88);
+            --bg-card-2: rgba(20, 31, 53, 0.92);
+            --bg-input: rgba(255, 255, 255, 0.06);
+            --border: rgba(148, 163, 184, 0.18);
+            --border-strong: rgba(96, 165, 250, 0.42);
+            --text: #f8fbff;
+            --muted: #a9b6cc;
+            --subtle: #7789a8;
+            --accent: #60a5fa;
+            --accent-2: #a78bfa;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #f97316;
+            --shadow: 0 22px 60px rgba(0, 0, 0, 0.38);
+            --shadow-soft: 0 12px 30px rgba(2, 6, 23, 0.26);
+            --body-bg:
+                radial-gradient(circle at 0% 0%, rgba(96, 165, 250, 0.27), transparent 34%),
+                radial-gradient(circle at 100% 8%, rgba(167, 139, 250, 0.25), transparent 33%),
+                radial-gradient(circle at 55% 105%, rgba(34, 197, 94, 0.11), transparent 40%),
+                linear-gradient(155deg, #050816 0%, #091225 46%, #10192e 100%);
+            --btn-primary: linear-gradient(135deg, #60a5fa, #8b5cf6);
+            --btn-active: linear-gradient(135deg, #10b981, #22c55e);
+            --status-success-bg: rgba(34, 197, 94, 0.16);
+            --status-success-text: #c6f6d5;
+            --status-warning-bg: rgba(250, 204, 21, 0.16);
+            --status-warning-text: #fde68a;
+            --status-error-bg: rgba(239, 68, 68, 0.16);
+            --status-error-text: #fecaca;
+            --status-info-bg: rgba(56, 189, 248, 0.15);
+            --status-info-text: #d8f4ff;
+        }
+
+        body[data-theme="light"] {
+            color-scheme: light;
+            --bg-main: #eff6ff;
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --bg-card-2: rgba(255, 255, 255, 0.96);
+            --bg-input: rgba(241, 245, 249, 0.88);
+            --border: rgba(100, 116, 139, 0.22);
+            --border-strong: rgba(37, 99, 235, 0.34);
+            --text: #10213c;
+            --muted: #506381;
+            --subtle: #7a8aa6;
+            --accent: #2563eb;
+            --accent-2: #7c3aed;
+            --shadow: 0 22px 60px rgba(30, 41, 59, 0.14);
+            --shadow-soft: 0 12px 30px rgba(30, 41, 59, 0.09);
+            --body-bg:
+                radial-gradient(circle at 0% 0%, rgba(125, 211, 252, 0.38), transparent 36%),
+                radial-gradient(circle at 100% 0%, rgba(196, 181, 253, 0.38), transparent 34%),
+                linear-gradient(155deg, #f8fbff 0%, #eef6ff 52%, #eaf2ff 100%);
+            --btn-primary: linear-gradient(135deg, #2563eb, #7c3aed);
+            --btn-active: linear-gradient(135deg, #16a34a, #22c55e);
+            --status-success-bg: rgba(34, 197, 94, 0.13);
+            --status-success-text: #166534;
+            --status-warning-bg: rgba(250, 204, 21, 0.18);
+            --status-warning-text: #854d0e;
+            --status-error-bg: rgba(239, 68, 68, 0.13);
+            --status-error-text: #991b1b;
+            --status-info-bg: rgba(56, 189, 248, 0.15);
+            --status-info-text: #075985;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            width: 410px;
+            min-height: 620px;
+            margin: 0;
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: var(--body-bg);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.35);
+            border-radius: 999px;
+        }
+
+        .wrap {
+            position: relative;
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 26px;
+            padding: 16px;
+            background: linear-gradient(145deg, rgba(96, 165, 250, 0.16), rgba(167, 139, 250, 0.12)), var(--bg-card);
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -58px;
+            top: -70px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(255,255,255,0.26), transparent 62%);
+            pointer-events: none;
+        }
+
+        .hero-top {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-right: 44px;
+        }
+
+        .brand-avatar {
+            width: 64px;
+            height: 64px;
+            flex: 0 0 64px;
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 16px 28px rgba(37, 99, 235, 0.24);
+        }
+
+        .brand-avatar-img {
+            width: 64px;
+            height: 64px;
+            display: block;
+            object-fit: cover;
+        }
+
+        .brand-copy { min-width: 0; }
+
+        .hero h1 {
+            margin: 0;
+            font-size: 20px;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            margin: 6px 0 0;
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--muted);
+        }
+
+        .settings-toggle {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            z-index: 40;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            cursor: pointer;
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-soft);
+            transition: transform .18s ease, border-color .2s ease;
+        }
+
+        body[data-theme="light"] .settings-toggle { background: rgba(255,255,255,0.82); }
+
+        .settings-toggle:hover {
+            transform: rotate(18deg) scale(1.03);
+            border-color: var(--border-strong);
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: 72px;
+            right: 14px;
+            z-index: 50;
+            width: 220px;
+            display: none;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 20px;
+            background: var(--bg-card-2);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .settings-menu.open { display: grid; }
+
+        .settings-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--subtle);
+        }
+
+        .theme-choice {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            background: var(--bg-input);
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            transition: transform .14s ease, border-color .18s ease, background .2s ease;
+        }
+
+        .theme-choice:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong);
+        }
+
+        .theme-choice.active {
+            border-color: var(--border-strong);
+            background: rgba(96, 165, 250, 0.16);
+        }
+
+        .theme-choice strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .theme-choice span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+            padding: 6px;
+            border-radius: 22px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(16px);
+        }
+
+        .tab-btn {
+            border: 0;
+            border-radius: 16px;
+            padding: 12px 9px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .14s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-1px);
+            color: var(--text);
+            background: var(--bg-input);
+        }
+
+        .tab-btn.active {
+            color: white;
+            background: var(--btn-primary);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+        }
+
+        .panel {
+            display: none;
+            gap: 12px;
+        }
+
+        .panel.active { display: grid; }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+            border-radius: 24px;
+            background: var(--bg-card-2);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(18px);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.045), transparent 34%);
+            pointer-events: none;
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--subtle);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .label::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.1);
+        }
+
+        .host,
+        .current-name,
+        .scan-progress,
+        .grade-summary {
+            margin-top: 10px;
+            padding: 12px 13px;
+            border-radius: 17px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .current-name {
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .hint { margin-top: 13px; }
+
+        .chip-list {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 112px;
+            overflow-y: auto;
+        }
+
+        .chip {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 8px 11px;
+            background: rgba(96, 165, 250, 0.13);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .14s ease, border-color .18s ease;
+        }
+
+        .chip:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong);
+        }
+
+        .empty {
+            width: 100%;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px dashed var(--border);
+            background: var(--bg-input);
+            color: var(--subtle);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .input-label {
+            display: block;
+            margin-top: 13px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        input[type="text"],
+        .copy-preview {
+            width: 100%;
+            margin-top: 8px;
+            border-radius: 17px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text);
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        input[type="text"] {
+            padding: 12px 13px;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus,
+        .copy-preview:focus {
+            border-color: var(--border-strong);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+        }
+
+        input::placeholder,
+        .copy-preview::placeholder {
+            color: var(--subtle);
+        }
+
+        .helper-text {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .actions {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .actions-single { grid-template-columns: 1fr; }
+
+        .btn {
+            border: 0;
+            border-radius: 16px;
+            padding: 12px 12px;
+            color: var(--text);
+            background: var(--bg-input);
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform .14s ease, box-shadow .18s ease, opacity .2s ease;
+        }
+
+        .btn:hover:not(:disabled) { transform: translateY(-1px); }
+        .btn:disabled { cursor: wait; opacity: .68; }
+
+        .btn-primary {
+            color: white;
+            background: var(--btn-primary);
+            box-shadow: 0 12px 22px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-primary.is-active {
+            background: var(--btn-active);
+            box-shadow: 0 12px 22px rgba(22, 163, 74, 0.22);
+        }
+
+        .btn-ghost {
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+        }
+
+        .btn-small {
+            padding: 8px 10px;
+            color: white;
+            background: linear-gradient(135deg, var(--red), var(--orange));
+            font-size: 11px;
+        }
+
+        .status {
+            margin-top: 12px;
+            min-height: 42px;
+            padding: 11px 12px;
+            border-radius: 17px;
+            border: 1px solid transparent;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.4;
+            visibility: hidden;
+        }
+
+        .status.show { visibility: visible; }
+        .status.is-success { background: var(--status-success-bg); color: var(--status-success-text); border-color: rgba(34, 197, 94, .25); }
+        .status.is-warning { background: var(--status-warning-bg); color: var(--status-warning-text); border-color: rgba(250, 204, 21, .25); }
+        .status.is-error { background: var(--status-error-bg); color: var(--status-error-text); border-color: rgba(239, 68, 68, .25); }
+        .status.is-info { background: var(--status-info-bg); color: var(--status-info-text); border-color: rgba(56, 189, 248, .25); }
+
+        .history-list,
+        .grade-list {
+            margin-top: 12px;
+            display: grid;
+            gap: 10px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .history-item,
+        .grade-item {
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: var(--bg-input);
+            transition: transform .14s ease, border-color .18s ease;
+        }
+
+        .history-item {
+            width: 100%;
+            padding: 11px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .history-item:hover,
+        .grade-item:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong);
+        }
+
+        .history-name,
+        .grade-subject {
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 900;
+            line-height: 1.35;
+        }
+
+        .history-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-date,
+        .grade-meta {
+            color: var(--subtle);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .copy-preview {
+            min-height: 180px;
+            max-height: 280px;
+            resize: vertical;
+            padding: 12px 13px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .scan-progress,
+        .grade-summary {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .scan-progress.is-active {
+            border-color: var(--border-strong);
+            color: var(--text);
+            background: rgba(96, 165, 250, 0.13);
+        }
+
+        .grade-item {
+            padding: 12px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .grade-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .grade-final {
+            min-width: 42px;
+            min-height: 42px;
+            padding: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: rgba(34, 197, 94, 0.14);
+            border: 1px solid rgba(34, 197, 94, 0.22);
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 950;
+        }
+
+        .grade-marks {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <button id="settingsToggle" class="settings-toggle" type="button" title="Темы" aria-label="Темы">⚙</button>
+
+        <section id="settingsMenu" class="settings-menu" aria-label="Настройки темы">
+            <div class="settings-title">Оформление</div>
+            <button id="themeLightBtn" class="theme-choice" type="button" data-theme-choice="light">
+                <strong>☀ Светлая тема</strong>
+                <span>Мягкий светлый интерфейс.</span>
+            </button>
+            <button id="themeDarkBtn" class="theme-choice" type="button" data-theme-choice="dark">
+                <strong>🌙 Тёмная тема</strong>
+                <span>Стеклянный тёмный интерфейс.</span>
+            </button>
+        </section>
+
+        <section class="hero">
+            <div class="hero-top">
+                <div class="brand-avatar" title="Иконка расширения">
+                    <img src="4.png" alt="Аватар God Game" class="brand-avatar-img">
+                </div>
+                <div class="brand-copy">
+                    <h1>God Game</h1>
+                    <p>
+                        By.x6uxoiAngelx<br>
+                        #VibeCode<br>
+                        Tg: It_is_not_known<br>
+                        GitHub: https://github.com/6uxoi-Angel
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tabs" aria-label="Режимы">
+            <button id="tabJitsi" class="tab-btn active" type="button">Имя</button>
+            <button id="tabQuestion" class="tab-btn" type="button">Копирование</button>
+            <button id="tabGrades" class="tab-btn" type="button">Итоговые</button>
+        </section>
+
+        <section id="panelJitsi" class="panel active">
+            <section class="card">
+                <div class="label">Активная вкладка (Не трогать если не знаешь зачем!)</div>
+                <div id="pageHost" class="host">Определяем...</div>
+
+                <div class="label hint">Ключи из URL (Не трогать если не знаешь зачем!)</div>
+                <div id="keysList" class="chip-list"></div>
+            </section>
+
+            <section class="card">
+                <div class="label">Имя пользователя</div>
+                <div id="currentName" class="current-name">Загрузка...</div>
+
+                <label for="newName" class="input-label">Новое имя</label>
+                <input type="text" id="newName" autocomplete="off" placeholder="Введите новое имя">
+
+                <div class="actions">
+                    <button id="changeBtn" class="btn btn-primary">Применить имя</button>
+                    <button id="injectBtn" class="btn btn-ghost">Обновить связь</button>
+                </div>
+
+                <div id="status" class="status" aria-live="polite"></div>
+            </section>
+
+            <section class="card">
+                <div class="row">
+                    <div class="label">История имён</div>
+                    <button id="clearHistoryBtn" class="btn btn-small">Очистить</button>
+                </div>
+                <div id="historyList" class="history-list"></div>
+            </section>
+
+            <section class="card">
+                <div class="label">Аудио в микрофон (Не трогать если не знаешь зачем!)</div>
+                <div class="helper-text">Воспроизвести тестовый звук для проверки захвата микрофона. (Не трогать если не знаешь зачем!)</div>
+                <div class="actions actions-single">
+                    <button id="playAudioBtn" class="btn btn-primary">Воспроизвести звук(Не трогать если не знаешь зачем!)</button>
+                </div>
+                <div id="audioStatus" class="status" aria-live="polite"></div>
+            </section>
+        </section>
+
+        <section id="panelQuestion" class="panel">
+            <section class="card">
+                <div class="label">Сканирование вопросов</div>
+                <div class="helper-text">Сканируй страницу, включай автокопирование или копируй текущий вопрос вручную.</div>
+
+                <div class="actions actions-single">
+                    <button id="scanBtn" class="btn btn-primary">Сканировать</button>
+                </div>
+
+                <div id="scanProgress" class="scan-progress">Сканирование не запущено</div>
+
+                <div class="actions">
+                    <button id="autoCopyBtn" class="btn btn-primary">Включить автокопирование (Не трогать если не знаешь зачем!)</button>
+                    <button id="copyNowBtn" class="btn btn-ghost">Скопировать сейчас</button>
+                </div>
+
+                <div class="actions actions-single">
+                    <button id="downloadQuestionLogsBtn" class="btn btn-ghost">Скачать логи сканера .txt (При не правильном копирование отправить лог в тг)</button>
+                </div>
+
+                <div id="questionStatus" class="status" aria-live="polite"></div>
+            </section>
+
+            <section class="card">
+                <div class="row">
+                    <div class="label">Последний результат</div>
+                    <button id="clearCopiedBtn" class="btn btn-small">Очистить</button>
+                </div>
+                <textarea id="copiedQuestion" class="copy-preview" readonly placeholder="Здесь появится текст последнего скопированного вопроса."></textarea>
+            </section>
+        </section>
+
+        <section id="panelGrades" class="panel">
+            <section class="card">
+                <div class="label">Расчёт итоговых оценок</div>
+                <div class="helper-text">Открой страницу журнала InternetUrok и нажми кнопку. Итоговая оценка считается по среднему баллу.</div>
+                <div class="actions actions-single">
+                    <button id="refreshGradesBtn" class="btn btn-primary">Посчитать оценки</button>
+                </div>
+                <div id="gradesSummary" class="grade-summary">Оценки ещё не считались</div>
+                <div id="gradesStatus" class="status" aria-live="polite"></div>
+            </section>
+
+            <section class="card">
+                <div class="label">Список предметов</div>
+                <div id="gradesList" class="grade-list">
+                    <div class="empty">Откройте журнал и нажмите «Посчитать оценки»</div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "God game",
+  "version": "1.2.5",
+  "description": "God Game — новый дизайн, темы, отдельный аватар 64×64, Jitsi, парсер вопросов и итоговые оценки",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "clipboardWrite",
+    "microphone"
+  ],
+  "action": {
+    "default_title": "God game",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "1.png",
+      "48": "2.png",
+      "128": "3.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected.js",
+        "4.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "1.png",
+    "48": "2.png",
+    "64": "4.png",
+    "128": "3.png"
+  }
+}
