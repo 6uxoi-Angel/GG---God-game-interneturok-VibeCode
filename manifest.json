@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "God game",
-  "version": "1.2.5",
+  "version": "1.0",
   "description": "God Game — новый дизайн, темы, отдельный аватар 64×64, Jitsi, парсер вопросов и итоговые оценки",
   "permissions": [
     "activeTab",
